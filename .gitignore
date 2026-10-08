@@ -1,0 +1,21 @@
+# Environment & Temporary Files
+.env
+*.log
+*.tmp
+*.bak
+*.swp
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Agent & Brain Scratch Dirs
+.system_generated/
+scratch/
