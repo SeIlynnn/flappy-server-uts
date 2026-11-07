@@ -290,7 +290,29 @@
             bird.jump();
         } else if (currentState === STATES.PLAYING) {
             bird.jump();
+        } else if (currentState === STATES.GAMEOVER) {
+            if (typeof window.dismissGameOverModal === 'function') {
+                window.dismissGameOverModal();
+            }
+            window.resetGame();
+            currentState = STATES.PLAYING;
+            bird.jump();
         }
+    }
+
+    function isGameActionKey(e) {
+        return (
+            e.code === 'Space' ||
+            e.key === ' ' ||
+            e.key === 'Spacebar' ||
+            e.keyCode === 32 ||
+            e.which === 32 ||
+            e.code === 'ArrowUp' ||
+            e.key === 'ArrowUp' ||
+            e.key === 'Up' ||
+            e.keyCode === 38 ||
+            e.which === 38
+        );
     }
 
     window.addEventListener('keydown', function (e) {
@@ -299,11 +321,9 @@
             return;
         }
 
-        if (e.code === 'Space' || e.key === ' ' || e.code === 'ArrowUp') {
-            if (currentState !== STATES.GAMEOVER) {
-                e.preventDefault();
-                handleInput();
-            }
+        if (isGameActionKey(e)) {
+            e.preventDefault();
+            handleInput();
         }
     });
 

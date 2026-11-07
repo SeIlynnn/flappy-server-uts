@@ -50,29 +50,42 @@
 
         const playerNameInput = document.getElementById('playerNameInput') || document.querySelector('input[name="player_name"]');
         if (playerNameInput) {
-            playerNameInput.focus();
+            setTimeout(function () {
+                playerNameInput.focus();
+            }, 100);
         }
     };
 
     /**
-     * 2. Inisialisasi Event Listener Tombol Restart
+     * 2. Helper Global Tutup Modal Game Over
+     */
+    window.dismissGameOverModal = function () {
+        const gameOverModal = document.getElementById('gameOverModal');
+        if (gameOverModal) {
+            gameOverModal.classList.add('hidden');
+            gameOverModal.style.display = 'none';
+            gameOverModal.setAttribute('aria-hidden', 'true');
+        }
+
+        const feedbackEl = document.getElementById('submitFeedback');
+        if (feedbackEl) {
+            feedbackEl.textContent = '';
+        }
+
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+    };
+
+    /**
+     * 3. Inisialisasi Event Listener Tombol Restart
      */
     document.addEventListener('DOMContentLoaded', function () {
         const btnRestart = document.getElementById('btnRestart') || document.getElementById('restartBtn');
-        const gameOverModal = document.getElementById('gameOverModal');
 
         if (btnRestart) {
             btnRestart.addEventListener('click', function () {
-                if (gameOverModal) {
-                    gameOverModal.classList.add('hidden');
-                    gameOverModal.style.display = 'none';
-                    gameOverModal.setAttribute('aria-hidden', 'true');
-                }
-
-                const feedbackEl = document.getElementById('submitFeedback');
-                if (feedbackEl) {
-                    feedbackEl.textContent = '';
-                }
+                window.dismissGameOverModal();
 
                 if (typeof window.resetGame === 'function') {
                     window.resetGame();
