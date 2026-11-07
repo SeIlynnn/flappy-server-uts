@@ -8,7 +8,6 @@
  * =========================================================================
  */
 
-// Muat data awal dari backend jika tersedia
 require_once __DIR__ . '/backend.php';
 ?>
 <!DOCTYPE html>
@@ -257,14 +256,12 @@ require_once __DIR__ . '/backend.php';
             const modal = document.getElementById('gameOverModal');
             const modalCard = modal ? modal.querySelector('.modal-card') : null;
 
-            // Karakter counter input nama
             if (nameInput && charCounter) {
                 nameInput.addEventListener('input', function () {
                     charCounter.textContent = `${this.value.length}/15`;
                 });
             }
 
-            // Keyboard shortcut pada modal Game Over (Enter to Submit, Esc to Restart)
             window.addEventListener('keydown', function (e) {
                 if (!modal || modal.classList.contains('hidden')) return;
 
@@ -277,7 +274,6 @@ require_once __DIR__ . '/backend.php';
                 }
             });
 
-            // Fungsi render tabel leaderboard (4 kolom sinkron dengan style.css Claude Opus)
             window.refreshLeaderboard = async function () {
                 if (!listEl) return;
                 try {
@@ -290,7 +286,6 @@ require_once __DIR__ . '/backend.php';
                             return;
                         }
 
-                        // Perbarui stats ringkas
                         const topScoreEl = document.getElementById('statTopScore');
                         const topPilotEl = document.getElementById('statTopPilot');
                         const totalEl = document.getElementById('statTotal');
@@ -329,7 +324,6 @@ require_once __DIR__ . '/backend.php';
                 }
             };
 
-            // Handler tombol submit skor
             if (submitBtn) {
                 submitBtn.addEventListener('click', async function () {
                     const name = nameInput ? nameInput.value.trim() : '';
@@ -370,10 +364,8 @@ require_once __DIR__ . '/backend.php';
                             }
                             if (modalCard) modalCard.classList.add('is-celebrate');
 
-                            // Refresh tabel skor
                             await window.refreshLeaderboard();
 
-                            // Tutup modal dan reset game otomatis setelah 1 detik
                             setTimeout(() => {
                                 if (modal) {
                                     modal.classList.add('hidden');
@@ -408,7 +400,6 @@ require_once __DIR__ . '/backend.php';
                 return p.innerHTML;
             }
 
-            // Muat dan sinkronkan data papan peringkat saat halaman selesai dimuat
             window.refreshLeaderboard();
         });
     </script>
