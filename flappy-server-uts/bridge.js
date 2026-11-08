@@ -1,8 +1,5 @@
 /**
- * =========================================================================
- * FILE: bridge.js
  * UI Interaction Bridge (Menghubungkan Core Game Engine & DOM Modal UI)
- * =========================================================================
  */
 
 (function () {
@@ -10,8 +7,8 @@
 
     /**
      * 1. Handler Global Game Over
-     * Dipanggil otomatis oleh game engine (game.js) ketika burung mati/menabrak.
-     * @param {number} finalScore - Skor akhir perolehan pemain.
+     * Dipanggil otomatis oleh game engine (game.js) ketika burung menabrak rintangan/lantai.
+     * @param {number} finalScore - Skor akhir pemain.
      */
     window.handleGameOver = function (finalScore) {
         const finalScoreDisplay = document.getElementById('finalScoreDisplay') || document.getElementById('finalScore');
@@ -35,13 +32,13 @@
         if (rankPreview) {
             if (finalScore >= 50) {
                 rankPreview.className = 'rank-preview is-top';
-                rankPreview.textContent = '🔥 SKOR DEWA! KANDIDAT JUARA 1';
+                rankPreview.textContent = 'SKOR TINGGI: KANDIDAT JUARA 1';
             } else if (finalScore >= 20) {
                 rankPreview.className = 'rank-preview is-top';
-                rankPreview.textContent = '⚡ SKOR TINGGI! BERPOTENSI TOP 10';
+                rankPreview.textContent = 'SKOR TINGGI: BERPOTENSI MASUK TOP 10';
             } else if (finalScore >= 5) {
                 rankPreview.className = 'rank-preview';
-                rankPreview.textContent = '👍 TERBANG BAGUS! SIMPAN SKORMU';
+                rankPreview.textContent = 'PERFORMA BAGUS: SIMPAN SKOR ANDA';
             } else {
                 rankPreview.className = 'rank-preview';
                 rankPreview.textContent = 'AYO COBA LAGI UNTUK SKOR LEBIH TINGGI!';
@@ -50,35 +47,52 @@
 
         const playerNameInput = document.getElementById('playerNameInput') || document.querySelector('input[name="player_name"]');
         if (playerNameInput) {
-            playerNameInput.focus();
+            // Gunakan preventScroll agar Firefox tidak melompat scroll ke bawah
+            playerNameInput.focus({ preventScroll: true });
         }
     };
 
     /**
-     * 2. Inisialisasi Event Listener Tombol Restart
+     * 2. Handler Restart Game dari Modal atau Keyboard
+     */
+    window.restartGameFromModal = function () {
+        const gameOverModal = document.getElementById('gameOverModal');
+        if (gameOverModal) {
+            gameOverModal.classList.add('hidden');
+            gameOverModal.style.display = 'none';
+            gameOverModal.setAttribute('aria-hidden', 'true');
+        }
+
+        const feedbackEl = document.getElementById('submitFeedback');
+        if (feedbackEl) {
+            feedbackEl.textContent = '';
+        }
+
+        if (typeof window.resetGame === 'function') {
+            window.resetGame();
+        }
+
+        // Pastikan tampilan kembali ke canvas tanpa scroll liar
+        window.scrollTo({ top: 0, behavior: 'instant' });
+
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas && typeof canvas.focus === 'function') {
+            canvas.focus({ preventScroll: true });
+        }
+    };
+
+    /**
+     * 3. Inisialisasi Event Listener Tombol Restart
      */
     document.addEventListener('DOMContentLoaded', function () {
         const btnRestart = document.getElementById('btnRestart') || document.getElementById('restartBtn');
-        const gameOverModal = document.getElementById('gameOverModal');
 
         if (btnRestart) {
-            btnRestart.addEventListener('click', function () {
-                if (gameOverModal) {
-                    gameOverModal.classList.add('hidden');
-                    gameOverModal.style.display = 'none';
-                    gameOverModal.setAttribute('aria-hidden', 'true');
+            btnRestart.addEventListener('click', function (e) {
+                if (e && typeof e.preventDefault === 'function') {
+                    e.preventDefault();
                 }
-
-                const feedbackEl = document.getElementById('submitFeedback');
-                if (feedbackEl) {
-                    feedbackEl.textContent = '';
-                }
-
-                if (typeof window.resetGame === 'function') {
-                    window.resetGame();
-                } else {
-                    console.warn("Fungsi window.resetGame() tidak ditemukan di game.js");
-                }
+                window.restartGameFromModal();
             });
         }
     });

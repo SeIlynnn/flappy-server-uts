@@ -1,11 +1,8 @@
 <?php
 /**
- * =========================================================================
- * FILE: index.php
- * AREA KHUSUS: Claude Opus 5.5 (Master Entry Point & Master Assembler)
- * DILARANG DIUBAH OLEH AGENT LAIN!
- * Proyek  : FLAPPY BIRD ARCADE 16395  |  Domain: 16395.local
- * =========================================================================
+ * Master Entry Point - Flappy Bird Retro-Arcade 16395
+ * UTS Pemrograman Web 2026
+ * Domain Target: 16395.local
  */
 
 require_once __DIR__ . '/backend.php';
@@ -17,13 +14,14 @@ require_once __DIR__ . '/backend.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLAPPY BIRD ARCADE 16395 // UTS 2026</title>
     <meta name="description" content="Game Flappy Bird Retro-Arcade Modern dengan Leaderboard MariaDB Server (16395.local)">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2305030f'/><circle cx='16' cy='16' r='10' fill='%23ffea00'/></svg>">
 
     <!-- Google Fonts: Inter, Press Start 2P, Silkscreen -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Stylesheet Desain Modern Synthwave Retro-Arcade (Area Claude Opus 5.5) -->
+    <!-- Stylesheet Desain Modern Synthwave Retro-Arcade -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -103,17 +101,24 @@ require_once __DIR__ . '/backend.php';
 
                 <!-- Layar Monitor CRT Canvas (360x540) -->
                 <div class="screen">
-                    <canvas id="gameCanvas" width="360" height="540"></canvas>
+                    <canvas id="gameCanvas" width="360" height="540" tabindex="0" aria-label="Layar Game Flappy Bird"></canvas>
+                </div>
+
+                <!-- Kontrol Game Arcade (Play / Lompat Button) -->
+                <div class="arcade-controls">
+                    <button type="button" id="btnPlay" class="arcade-btn primary arcade-play-btn" aria-label="Mulai atau Lompat">
+                        <span class="btn-play-icon">▶</span> PLAY / LOMPAT
+                    </button>
                 </div>
 
                 <!-- Petunjuk Kontrol -->
                 <div class="controls-hint">
                     <span>KONTROL:</span>
-                    <span class="key-tag">SPACE</span>
+                    <span class="key-tag" role="button" tabindex="0" title="Klik untuk terbang">SPACE</span>
                     <span>/</span>
-                    <span class="key-tag">KLIK MOUSE</span>
+                    <span class="key-tag" role="button" tabindex="0" title="Klik untuk terbang">KLIK MOUSE</span>
                     <span>/</span>
-                    <span class="key-tag">LAYAR SENTUH</span>
+                    <span class="key-tag" role="button" tabindex="0" title="Sentuh untuk terbang">LAYAR SENTUH</span>
                 </div>
             </section>
 
@@ -193,13 +198,13 @@ require_once __DIR__ . '/backend.php';
             <span class="sep">//</span>
             <span>PEMROGRAMAN WEB UTS 2026</span>
             <span class="sep">//</span>
-            <span>MULTI-AGENT VIBE CODING</span>
+            <span>MARIADB SERVER LEADERBOARD</span>
         </footer>
 
     </div>
 
     <!-- Modal Game Over (Glassmorphism & Neon Glitch) -->
-    <div id="gameOverModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+    <div id="gameOverModal" class="modal-overlay hidden" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
         <div class="modal-card">
             <span class="modal-kicker">MISSION FAILED</span>
             <h2 id="gameOverTitle" class="game-over-title" data-text="GAME OVER">GAME OVER</h2>
@@ -263,14 +268,19 @@ require_once __DIR__ . '/backend.php';
             }
 
             window.addEventListener('keydown', function (e) {
-                if (!modal || modal.classList.contains('hidden')) return;
+                if (!modal || modal.classList.contains('hidden') || modal.style.display === 'none') return;
 
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (submitBtn && !submitBtn.disabled) submitBtn.click();
                 } else if (e.key === 'Escape') {
-                    const btnRestart = document.getElementById('btnRestart');
-                    if (btnRestart) btnRestart.click();
+                    e.preventDefault();
+                    if (typeof window.restartGameFromModal === 'function') {
+                        window.restartGameFromModal();
+                    } else {
+                        const btnRestart = document.getElementById('btnRestart');
+                        if (btnRestart) btnRestart.click();
+                    }
                 }
             });
 
@@ -314,12 +324,12 @@ require_once __DIR__ . '/backend.php';
                             `;
                         }).join('');
                     } else if (listEl.children.length === 0 || listEl.querySelector('.empty-state')) {
-                        listEl.innerHTML = `<li class="lb-state is-error">⚠️ ${escapeHtml(json.message || 'Database offline. Nyalakan MariaDB di XAMPP!')}</li>`;
+                        listEl.innerHTML = `<li class="lb-state is-error">${escapeHtml(json.message || 'Database offline. Nyalakan MariaDB di XAMPP!')}</li>`;
                     }
                 } catch (err) {
                     console.error("Gagal sinkron leaderboard:", err);
                     if (listEl.children.length === 0 || listEl.querySelector('.empty-state')) {
-                        listEl.innerHTML = '<li class="lb-state is-error">⚠️ Server offline. Nyalakan MariaDB di XAMPP!</li>';
+                        listEl.innerHTML = '<li class="lb-state is-error">Server offline. Nyalakan MariaDB di XAMPP!</li>';
                     }
                 }
             };
@@ -338,7 +348,7 @@ require_once __DIR__ . '/backend.php';
                             modalCard.classList.add('is-shake');
                             setTimeout(() => modalCard.classList.remove('is-shake'), 450);
                         }
-                        if (nameInput) nameInput.focus();
+                        if (nameInput) nameInput.focus({ preventScroll: true });
                         return;
                     }
 
@@ -360,7 +370,7 @@ require_once __DIR__ . '/backend.php';
                         if (json.status === 'success') {
                             if (feedbackEl) {
                                 feedbackEl.className = 'feedback-msg is-success';
-                                feedbackEl.textContent = '🎉 Skor berhasil masuk papan peringkat!';
+                                feedbackEl.textContent = 'Skor berhasil masuk papan peringkat!';
                             }
                             if (modalCard) modalCard.classList.add('is-celebrate');
 

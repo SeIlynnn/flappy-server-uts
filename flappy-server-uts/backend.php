@@ -1,10 +1,8 @@
 <?php
 /**
- * =========================================================================
- * FILE: backend.php
- * Backend Logic (PHP + MariaDB / MySQLi OOP)
- * Target Domain: 16395.local
- * =========================================================================
+ * Backend Service (PHP + MariaDB / MySQLi OOP)
+ * UTS Pemrograman Web 2026
+ * Domain Target: 16395.local
  */
 
 $db_connected = false;
@@ -17,26 +15,38 @@ $db_pass = 'password123';
 $db_name = 'db_16395';
 
 mysqli_report(MYSQLI_REPORT_OFF);
-$mysqli = @new mysqli($db_host, $db_user, $db_pass, $db_name);
 
-if ($mysqli->connect_errno) {
-    $fallback_mysqli = @new mysqli('localhost', 'root', '', $db_name);
-    if (!$fallback_mysqli->connect_errno) {
-        $mysqli = $fallback_mysqli;
-        $db_connected = true;
-        $db_status_msg = "Koneksi ke database '{$db_name}' berhasil (via fallback root).";
-        $mysqli->set_charset("utf8mb4");
+// Inisialisasi koneksi dengan timeout pendek agar tidak memblokir respon server saat database offline
+$mysqli = mysqli_init();
+if ($mysqli) {
+    $mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 1);
+    $connected = @$mysqli->real_connect($db_host, $db_user, $db_pass, $db_name);
+
+    if (!$connected) {
+        // Fallback ke user root default XAMPP
+        $fallback_mysqli = mysqli_init();
+        $fallback_mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 1);
+        $fallback_connected = @$fallback_mysqli->real_connect('localhost', 'root', '', $db_name);
+
+        if ($fallback_connected) {
+            $mysqli = $fallback_mysqli;
+            $db_connected = true;
+            $db_status_msg = "Koneksi ke database '{$db_name}' berhasil (via fallback root).";
+            $mysqli->set_charset("utf8mb4");
+        } else {
+            $db_connected = false;
+            $db_status_msg = "Koneksi database gagal: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+        }
     } else {
-        $db_connected = false;
-        $db_status_msg = "Koneksi database gagal: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+        $db_connected = true;
+        $db_status_msg = "Koneksi ke database '{$db_name}' berhasil (user: {$db_user}).";
+        $mysqli->set_charset("utf8mb4");
     }
-} else {
-    $db_connected = true;
-    $db_status_msg = "Koneksi ke database '{$db_name}' berhasil (user: {$db_user}).";
-    $mysqli->set_charset("utf8mb4");
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+if ($request_method === 'POST') {
     $raw_json = file_get_contents('php://input');
     $json_data = json_decode($raw_json, true);
 

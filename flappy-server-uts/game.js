@@ -1,9 +1,6 @@
 /**
- * =========================================================================
- * FILE: game.js
  * Core Game Engine (HTML5 Canvas 2D Prosedural)
- * Target Resolusi Render: 360 x 540 | Zero External Assets
- * =========================================================================
+ * Resolusi Render: 360 x 540 | Zero External Assets
  */
 
 (function () {
@@ -15,6 +12,7 @@
         return;
     }
 
+    canvas.setAttribute('tabindex', '0');
     canvas.width = 360;
     canvas.height = 540;
     const ctx = canvas.getContext('2d');
@@ -290,32 +288,94 @@
             bird.jump();
         } else if (currentState === STATES.PLAYING) {
             bird.jump();
+        } else if (currentState === STATES.GAMEOVER) {
+            if (typeof window.restartGameFromModal === 'function') {
+                window.restartGameFromModal();
+            } else if (typeof window.resetGame === 'function') {
+                window.resetGame();
+            }
         }
     }
+    window.handleGameInput = handleInput;
 
+    function isInputElement(el) {
+        if (!el) return false;
+        const tag = el.tagName ? el.tagName.toUpperCase() : '';
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    }
+
+    // Tangkap tombol navigasi pada fase capture agar browser/Firefox tidak melakukan scroll
     window.addEventListener('keydown', function (e) {
-        const activeTag = document.activeElement ? document.activeElement.tagName : '';
-        if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        if (isInputElement(e.target) || isInputElement(document.activeElement)) {
             return;
         }
 
-        if (e.code === 'Space' || e.key === ' ' || e.code === 'ArrowUp') {
-            if (currentState !== STATES.GAMEOVER) {
-                e.preventDefault();
+        const isSpace = e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32 || e.which === 32;
+        const isUp = e.code === 'ArrowUp' || e.key === 'ArrowUp' || e.keyCode === 38;
+        const isDown = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40;
+        const isPageNav = e.key === 'PageDown' || e.key === 'PageUp' || e.keyCode === 33 || e.keyCode === 34;
+
+        if (isSpace || isUp || isDown || isPageNav) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isSpace || isUp) {
                 handleInput();
             }
         }
-    });
+    }, { capture: true, passive: false });
 
-    canvas.addEventListener('mousedown', function (e) {
-        e.preventDefault();
+    function triggerUserAction(e) {
+        if (e && typeof e.preventDefault === 'function') {
+            e.preventDefault();
+        }
+        if (typeof canvas.focus === 'function') {
+            canvas.focus({ preventScroll: true });
+        }
         handleInput();
-    });
+    }
 
-    canvas.addEventListener('touchstart', function (e) {
-        e.preventDefault();
-        handleInput();
-    }, { passive: false });
+    if (window.PointerEvent) {
+        canvas.addEventListener('pointerdown', triggerUserAction);
+    } else {
+        canvas.addEventListener('mousedown', triggerUserAction);
+        canvas.addEventListener('touchstart', triggerUserAction, { passive: false });
+    }
+    canvas.addEventListener('click', triggerUserAction);
+
+    function bindInteractiveElements() {
+        const btnPlay = document.getElementById('btnPlay');
+        if (btnPlay) {
+            btnPlay.addEventListener('click', triggerUserAction);
+            btnPlay.addEventListener('keydown', function (e) {
+                const isSpace = e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32;
+                if (isSpace) {
+                    e.preventDefault();
+                    triggerUserAction(e);
+                }
+            });
+        }
+
+        const screenEl = document.querySelector('.screen');
+        if (screenEl) {
+            screenEl.addEventListener('click', function (e) {
+                if (e.target !== canvas) {
+                    triggerUserAction(e);
+                }
+            });
+        }
+
+        document.querySelectorAll('.key-tag').forEach(tag => {
+            tag.style.cursor = 'pointer';
+            tag.addEventListener('click', triggerUserAction);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindInteractiveElements);
+    } else {
+        bindInteractiveElements();
+    }
 
     window.resetGame = function () {
         currentState = STATES.READY;

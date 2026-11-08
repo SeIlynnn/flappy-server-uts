@@ -1,104 +1,92 @@
-# 🎮 FLAPPY BIRD RETRO-ARCADE 16395 // UTS 2026
+# Flappy Bird Retro-Arcade 16395 - UTS Pemrograman Web 2026
 
-![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![MariaDB](https://img.shields.io/badge/MariaDB-MySQLi_OOP-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-![HTML5 Canvas](https://img.shields.io/badge/HTML5-Canvas_2D-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3 Synthwave](https://img.shields.io/badge/Style-Synthwave_Arcade-ff2e97?style=for-the-badge)
-![Multi-Agent](https://img.shields.io/badge/Vibe_Coding-Multi--Agent-00f3ff?style=for-the-badge)
-
-Game **Flappy Bird Retro-Arcade Modern** berbasis web dengan integrasi server database MariaDB/MySQL, deteksi tabrakan AABB prosedural murni (*zero external image assets*), dan antarmuka visual Synthwave 80s yang responsif.
-
-Proyek ini dibangun menggunakan paradigma **Collaborative Multi-Agent Vibe Coding** dengan batasan akses file (*permission boundaries*) yang ketat antar model AI.
+Aplikasi permainan web Flappy Bird modern bertema retro-arcade synthwave dengan backend PHP dan database MariaDB/MySQL untuk pencatatan skor leaderboard secara real-time.
 
 ---
 
-## 🏛️ Arsitektur & Struktur Direktori
+## Struktur Direktori
 
 ```text
 flappy-server-uts/
-├── schema.sql           # Database schema, user DDL, & dummy data awal (Gemini 3.1 Pro)
-├── backend.php          # Koneksi MySQLi OOP, anti-SQL injection, & REST API (Gemini 3.1 Pro)
-├── game.js              # HTML5 Canvas 2D engine, fisika flappy, & tabrakan AABB (Gemini 3.8 Flash)
-├── bridge.js            # Jembatan interaksi event Game Over & Modal UI
-├── style.css            # Desain Synthwave Retro-Arcade, neon glow & CRT scanlines (Claude Opus 5.5)
-├── index.php            # Master entry point, server-side render & DOM assembler (Claude Opus 5.5)
-└── AGENTS.md            # Kontrak hak akses & protokol kolaborasi multi-agent
+├── schema.sql           # Skema database MariaDB, user DDL, dan data awal
+├── backend.php          # Koneksi database MySQLi OOP, validasi input, dan REST API
+├── game.js              # Game engine Canvas 2D, kalkulasi fisika, dan deteksi tabrakan
+├── bridge.js            # Penghubung event game engine dengan antarmuka modal
+├── style.css            # Penggayaan visual retro synthwave arcade
+└── index.php            # Halaman utama game dan integrasi antarmuka
 ```
 
 ---
 
-## 🤖 Multi-Agent Collaboration Matrix
+## Fitur Utama
 
-| Model AI | Peran / Domain | Tanggung Jawab | File yang Dikelola |
-| :--- | :--- | :--- | :--- |
-| **Gemini 3.1 Pro** | Database & Backend Architect | Skema DDL MariaDB, Prepared Statements (Anti-SQL Injection), REST API Endpoint | `schema.sql`, `backend.php` |
-| **Gemini 3.8 Flash** | Game Engine & Physics Dev | Render Canvas 360x540 prosedural, gravitasi, kontrol lompat, pipa acak, tabrakan AABB | `game.js` |
-| **Claude Opus 5.5** | UI/UX Designer & Master Assembler | Visual Synthwave 80s, animasi CRT & 3D grid, modal glassmorphism, perakitan akhir | `style.css`, `index.php` |
+1. **Rendering Prosedural HTML5 Canvas:**
+   Seluruh elemen visual (burung, pipa rintangan, animasi kepakan, latar bintang, dan lantai bergerak) dirender menggunakan Canvas 2D API tanpa aset gambar eksternal.
 
----
+2. **Leaderboard Terintegrasi:**
+   Papan skor Top 10 tersinkronisasi langsung dengan database MariaDB melalui endpoint REST API.
 
-## ✨ Fitur Utama
+3. **Backend Aman:**
+   Menggunakan MySQLi dengan prepared statements untuk mencegah ancaman SQL Injection, dilengkapi validasi tipe data dan sanitasi input nama pemain.
 
-1. **Grafis Prosedural Tanpa Aset Gambar:**
-   - Seluruh grafis (burung pixel, animasi kepakan sayap, pipa arcade, latar bintang & lantai) digambar murni via JavaScript Canvas 2D API.
-2. **Keamanan & Robustness Backend:**
-   - Query parameterized menggunakan **MySQLi Prepared Statements** untuk mencegah eksploitasi SQL Injection.
-   - Dilengkapi fallback otomatis ke user default `root` XAMPP jika user `user_16395` belum dikonfigurasi di server lokal.
-3. **Papan Skor Top 10 Interaktif:**
-   - Sinkronisasi instan via `fetch()` REST JSON endpoint (`action=get_leaderboard` & `action=save_score`).
-   - Tampilan podium khusus: Emas (*1st*), Perak (*2nd*), dan Perunggu (*3rd*).
-4. **Visual Modern Synthwave 80s:**
-   - Lapisan scanline monitor tabung retro (*CRT Overlay*).
-   - Animasi 3D perspective grid bergerak di horizon bawah.
-   - Tipografi retro pixel menggunakan Google Fonts (`Press Start 2P`, `Silkscreen`, `Inter`).
-5. **Dukungan Multi-Kontrol:**
-   - Keyboard: `Spacebar` / `ArrowUp`
-   - Mouse: Klik kiri layar canvas
-   - Smartphone / Tablet: Sentuhan layar sentuh (*touch events*)
+4. **Multi-Input Kontrol:**
+   Dukungan kontrol menggunakan tombol Play pada antarmuka, tombol Spacebar, tombol panah atas (ArrowUp), klik mouse, dan layar sentuh (touchscreen) pada perangkat mobile/tablet.
+
+5. **Kompatibilitas Lintas Browser:**
+   Dioptimalkan untuk Chrome, Mozilla Firefox, Edge, dan browser modern lainnya dengan penanganan event terisolasi untuk mencegah perilaku scrolling halaman yang tidak disengaja.
 
 ---
 
-## 🚀 Panduan Menjalankan Proyek
+## Persyaratan Sistem
 
-### 1. Prasyarat
-* XAMPP / Laragon (Apache & MariaDB/MySQL)
-* PHP versi 7.4 atau lebih baru (PHP 8.x direkomendasikan)
-* Browser modern (Chrome, Edge, Firefox, Safari)
+- PHP 7.4 atau lebih baru (PHP 8.x direkomendasikan)
+- Ekstensi PHP: `mysqli`
+- Database Server: MariaDB atau MySQL
+- Web Server: Apache (XAMPP / Laragon) atau PHP Built-in Web Server
+- Web Browser modern (Firefox, Chrome, Edge, Safari)
 
-### 2. Setup Database
-1. Buka **phpMyAdmin** (`http://localhost/phpmyadmin`).
-2. Buat database baru bernama `db_16395`, atau langsung import file:
+---
+
+## Panduan Instalasi dan Menjalankan
+
+### 1. Konfigurasi Database
+
+1. Buka phpMyAdmin (`http://localhost/phpmyadmin`) atau terminal MySQL/MariaDB.
+2. Impor file skema database:
    ```text
    flappy-server-uts/schema.sql
    ```
-3. File `schema.sql` akan otomatis membuat tabel `leaderboard`, user `user_16395`, serta 10 data skor dummy awal.
+3. File skema akan membuat database `db_16395`, akun database `user_16395` (password: `password123`), tabel `leaderboard`, serta data dummy skor awal.
 
-### 3. Menjalankan Server Lokal
+### 2. Menjalankan Server
 
-#### Opsi A: Menggunakan XAMPP
-Pindahkan folder `FlappyBird` ke dalam direktori `C:\xampp\htdocs\`, lalu akses di browser:
-```text
-http://localhost/FlappyBird/flappy-server-uts/
-```
-
-#### Opsi B: Menggunakan PHP Built-in Server
-Buka terminal / PowerShell di folder proyek dan jalankan:
+#### Menggunakan PHP Built-in Server:
+Jalankan perintah berikut melalui terminal atau PowerShell di dalam folder proyek:
 ```bash
-# Melalui PHP di PATH:
 php -S localhost:8000 -t flappy-server-uts
-
-# Atau menggunakan binary XAMPP langsung:
-C:\xampp\php\php.exe -S localhost:8000 -t flappy-server-uts
 ```
-Buka browser dan kunjungi: **`http://localhost:8000`**
+Akses melalui peramban: `http://localhost:8000`
+
+#### Menggunakan XAMPP:
+1. Tempatkan folder proyek ke dalam direktori `htdocs` XAMPP:
+   ```text
+   C:\xampp\htdocs\flappy-server-uts\
+   ```
+2. Pastikan service Apache dan MySQL sudah berjalan pada XAMPP Control Panel.
+3. Akses melalui peramban:
+   ```text
+   http://localhost/flappy-server-uts/flappy-server-uts/
+   ```
 
 ---
 
-## 📜 Spesifikasi REST API (`backend.php`)
+## Spesifikasi REST API (`backend.php`)
 
-### 1. Ambil Leaderboard Top 10
-* **Request:** `GET backend.php?action=get_leaderboard`
-* **Response:**
+### 1. Ambil Data Leaderboard
+- **Metode:** `GET`
+- **Endpoint:** `backend.php?action=get_leaderboard`
+- **Format Respon:** JSON
+- **Contoh Respon:**
   ```json
   {
     "status": "success",
@@ -113,29 +101,30 @@ Buka browser dan kunjungi: **`http://localhost:8000`**
   }
   ```
 
-### 2. Simpan Skor Pemain Baru
-* **Request:** `POST backend.php?action=save_score`
-* **Headers:** `Content-Type: application/json`
-* **Payload:**
+### 2. Simpan Skor Pemain
+- **Metode:** `POST`
+- **Endpoint:** `backend.php?action=save_score`
+- **Header:** `Content-Type: application/json`
+- **Payload:**
   ```json
   {
-    "player_name": "ACE_PILOT",
+    "player_name": "PILOT_ACE",
     "score": 45
   }
   ```
-* **Response:**
+- **Contoh Respon:**
   ```json
   {
     "status": "success",
     "message": "Skor berhasil disimpan!",
     "id": 11,
-    "player_name": "ACE_PILOT",
+    "player_name": "PILOT_ACE",
     "score": 45
   }
   ```
 
 ---
 
-## 👨‍💻 Kontributor & Lisensi
-Dikembangkan untuk evaluasi **Ujian Tengah Semester (UTS) Pemrograman Web 2026** — Domain `16395.local`.  
-Lisensi: **MIT License**.
+## Lisensi
+
+Proyek ini dibuat untuk keperluan evaluasi Ujian Tengah Semester (UTS) Pemrograman Web 2026 dan dirilis di bawah lisensi MIT.
